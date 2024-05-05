@@ -14,3 +14,5 @@ the existing grid
 existing grid
 - Click individual cell to toggle life form alive/dead
 - Mouse-drag-select cells to toggle life forms in selected cells 
+
+![](https://github.com/SaganRitual/Conway/blob/main/Demo.gif)
