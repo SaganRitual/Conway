@@ -92,7 +92,7 @@ struct ContentView: View {
             VStack(alignment: .leading) {
                 HStack {
                     Spacer()
-                    Text("Grid Library")
+                    Text("Conway-ish")
                     Spacer()
                 }
                 .padding(.bottom)
@@ -173,6 +173,10 @@ struct ContentView: View {
                     scene.sowRandom()
                 }
 
+                Button("Place Gun") {
+                    scene.placeGun()
+                }
+
                 Spacer()
 
                 Image(systemName: "globe")
@@ -182,7 +186,7 @@ struct ContentView: View {
             }
             .padding()
             .monospaced()
-            .frame(width: 250)
+            .frame(width: 300)
         }
     }
 }

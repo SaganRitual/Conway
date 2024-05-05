@@ -25,6 +25,7 @@
 		D4257D3A2BE70B3200A3A58B /* CComponentSprite.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4257D392BE70B3200A3A58B /* CComponentSprite.swift */; };
 		D4257D3C2BE70BB500A3A58B /* CEntityGridCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4257D3B2BE70BB500A3A58B /* CEntityGridCell.swift */; };
 		D4257D3E2BE70CE300A3A58B /* CComponentLifeForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4257D3D2BE70CE300A3A58B /* CComponentLifeForm.swift */; };
+		D4257D432BE81C2400A3A58B /* Demo.gif in Resources */ = {isa = PBXBuildFile; fileRef = D4257D422BE81C2400A3A58B /* Demo.gif */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +49,8 @@
 		D4257D392BE70B3200A3A58B /* CComponentSprite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CComponentSprite.swift; sourceTree = "<group>"; };
 		D4257D3B2BE70BB500A3A58B /* CEntityGridCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CEntityGridCell.swift; sourceTree = "<group>"; };
 		D4257D3D2BE70CE300A3A58B /* CComponentLifeForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CComponentLifeForm.swift; sourceTree = "<group>"; };
+		D4257D412BE8045000A3A58B /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		D4257D422BE81C2400A3A58B /* Demo.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = Demo.gif; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +67,8 @@
 		D4257D002BE7084F00A3A58B = {
 			isa = PBXGroup;
 			children = (
+				D4257D412BE8045000A3A58B /* README.md */,
+				D4257D422BE81C2400A3A58B /* Demo.gif */,
 				D4257D0B2BE7084F00A3A58B /* Conway */,
 				D4257D382BE70B1A00A3A58B /* ECS */,
 				D4257D272BE708FF00A3A58B /* Extensions */,
@@ -209,6 +214,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D4257D432BE81C2400A3A58B /* Demo.gif in Resources */,
 				D4257D142BE7085100A3A58B /* Preview Assets.xcassets in Resources */,
 				D4257D112BE7085100A3A58B /* Assets.xcassets in Resources */,
 			);

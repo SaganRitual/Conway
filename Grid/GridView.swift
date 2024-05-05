@@ -29,6 +29,7 @@ class GridView {
         let verticals = stride(from: -ww, through: ww, by: 1).map { x in
             let sprite = SKSpriteNode(imageNamed: "pixel_1x1")
             sprite.size.height = gridHeightInPixels
+            sprite.size.width = 0.25
             sprite.position.x = x * cellSizeInPixels.width
             sprite.color = .yellow
             gridLinesRootNode.addChild(sprite)
@@ -39,6 +40,7 @@ class GridView {
         let horizontals = stride(from: -hh, through: hh, by: 1).map { y in
             let sprite = SKSpriteNode(imageNamed: "pixel_1x1")
             sprite.size.width = gridWidthInPixels
+            sprite.size.height = 0.25
             sprite.position.y = y * cellSizeInPixels.height
             sprite.color = .yellow
             gridLinesRootNode.addChild(sprite)

@@ -5,13 +5,13 @@ import SpriteKit
 
 final class CScene: SKScene, ObservableObject {
     static let cellSizeInPixels = CGSize(width: 10, height: 10)
-    static let gridSizeInCells = GridSize(width: 25, height: 25)
-    static let lifeTickInterval: TimeInterval = 0.25
+    static let gridSizeInCells = GridSize(width: 59, height: 59)
+    static let lifeTickInterval: TimeInterval = 0.02
     static let MIN_ZOOM: CGFloat = 0.125
     static let MAX_ZOOM: CGFloat = 8
     static let paddingAllowance = 0.9
 
-    @Published var cameraScale: CGFloat = 4
+    @Published var cameraScale: CGFloat = 1.75
     @Published var showGridLines = false
     @Published var sowRate: Double = 0.25
 
@@ -122,12 +122,12 @@ final class CScene: SKScene, ObservableObject {
     }
 
     func setZoom(delta zoomDelta: CGFloat) {
-        var newZoom = cameraNode.xScale + zoomDelta
+        var newZoom = 1 / (cameraNode.xScale + zoomDelta)
         if newZoom < Self.MIN_ZOOM { newZoom = Self.MIN_ZOOM }
         else if newZoom > Self.MAX_ZOOM { newZoom = Self.MAX_ZOOM }
 
         cameraScale = newZoom
-        cameraNode.setScale(cameraScale)
+        cameraNode.setScale(1 / cameraScale)
     }
 
     func tap(at positionInView: CGPoint) {
@@ -195,6 +195,43 @@ extension CScene {
             let lc = cc.entity.component(ofType: CComponentLifeForm.self)!
 
             lc.directive = .endLife
+        }
+
+        userOverride = true
+    }
+
+    // Gosper's glider gun per wikipedia
+    // https://en.wikipedia.org/wiki/Gun_(cellular_automaton)
+    func placeGun() {
+        let gunSize = GridSize(width: 39, height: 11)
+
+        let tiles: String =
+            "                                       " +
+            "                         O             " +
+            "                       O O             " +
+            "             OO      OO            OO  " +
+            "            O   O    OO            OO  " +
+            " OO        O     O   OO                " +
+            " OO        O   O OO    O O             " +
+            "           O     O       O             " +
+            "            O   O                      " +
+            "             OO                        " +
+            "                                       "
+
+        for x in 0..<gunSize.width {
+            for y in 0..<gunSize.height {
+                let ix = tiles.index(tiles.indices.first!, offsetBy: y * gunSize.width + x)
+                if tiles[ix] == "O" {
+                    let position = GridPoint(x: x - (gunSize.width / 2), y: (gunSize.height / 2) - y)
+                    assert(grid.isOnGrid(position))
+
+                    let cell = grid.cellAt(position)
+                    let cc = cell.contents! as! CCellContents
+                    let lc = cc.entity.component(ofType: CComponentLifeForm.self)!
+
+                    lc.directive = .beginLife
+                }
+            }
         }
 
         userOverride = true
@@ -284,7 +321,7 @@ private extension CScene {
             sprite.color = .cyan
             sprite.isHidden = true
             sprite.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-            sprite.size = Self.cellSizeInPixels * 0.25
+            sprite.size = Self.cellSizeInPixels * 0.75
 
             rootNode.addChild(sprite)
             return sprite

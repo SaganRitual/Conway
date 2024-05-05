@@ -29,6 +29,16 @@ struct GridPoint {
     }
 
     static func /= (_ L: inout GridPoint, R: Int) { L = L / R }
+
+    init(x: Int, y: Int) {
+        self.x = x
+        self.y = y
+    }
+
+    init(_ asSize: GridSize) {
+        self.x = asSize.width
+        self.y = asSize.height
+    }
 }
 
 extension GridPoint: Equatable, Hashable {}
