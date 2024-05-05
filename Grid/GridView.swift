@@ -88,7 +88,7 @@ class GridView {
         CGPoint(x: CGFloat(position.x) * cellSizeInPixels.width, y: CGFloat(position.y) * cellSizeInPixels.height)
     }
 
-    func getOverlappedCells(from startVertexInScene: CGPoint, to endVertexInScene: CGPoint) -> [GridCell] {
+    func getOverlappedCells(from startVertexInScene: CGPoint, to endVertexInScene: CGPoint) -> Set<GridCell> {
         // Allow for the start/end points to be swapped, that is, the user has
         // dragged upward and/or leftward from the drag origin
         let virtualStartX = startVertexInScene.x < endVertexInScene.x ? startVertexInScene.x : endVertexInScene.x
@@ -103,13 +103,13 @@ class GridView {
         let virtualStartInGrid = convertPointFromScene(position: virtualStartInScene)
         let virtualEndInGrid = convertPointFromScene(position: virtualEndInScene)
 
-        var cells = [GridCell]()
+        var cells = Set<GridCell>()
 
         (virtualStartInGrid.x ... virtualEndInGrid.x).forEach { x in
             (virtualStartInGrid.y ... virtualEndInGrid.y).forEach { y in
                 let p = GridPoint(x: x, y: y)
                 if grid.isOnGrid(p) {
-                    cells.append(grid.cellAt(p))
+                    cells.insert(grid.cellAt(p))
                 }
             }
         }
@@ -123,14 +123,13 @@ class GridView {
 
     func updateSelectionStagingHilite(from startVertexInScene: CGPoint, to endVertexInScene: CGPoint) {
         let currentStagedCells = selectionStageCells
-        let overlappedCells = getOverlappedCells(from: startVertexInScene, to: endVertexInScene)
-        let newStagedCells = Set(overlappedCells)
+        let newStagedCells = getOverlappedCells(from: startVertexInScene, to: endVertexInScene)
 
         let toHilite = newStagedCells.subtracting(currentStagedCells)
         let toUnhilite = currentStagedCells.subtracting(newStagedCells)
 
-        toHilite.forEach { ($0.contents! as! CCellContents).selectionStageHiliteSprite.isHidden = false }
-        toUnhilite.forEach { ($0.contents! as! CCellContents).selectionStageHiliteSprite.isHidden = true }
+        toHilite.forEach { ($0.contents! as! CCellContents).selectionHiliteSprite.isHidden = false }
+        toUnhilite.forEach { ($0.contents! as! CCellContents).selectionHiliteSprite.isHidden = true }
 
         self.selectionStageCells = newStagedCells
     }

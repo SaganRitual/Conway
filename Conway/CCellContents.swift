@@ -4,11 +4,13 @@ import Foundation
 import SpriteKit
 
 class CCellContents: GridCellContentsProtocol {
-    var dotSprite: SKSpriteNode
-    var selectionStageHiliteSprite: SKSpriteNode
+    let entity: CEntityGridCell
+    let selectionHiliteSprite: SKSpriteNode
 
-    init(dotSprite: SKSpriteNode, selectionStageHiliteSprite: SKSpriteNode) {
-        self.dotSprite = dotSprite
-        self.selectionStageHiliteSprite = selectionStageHiliteSprite
+    init(dotSprite: SKSpriteNode, selectionHiliteSprite: SKSpriteNode) {
+        self.entity = CEntityGridCell()
+        entity.addComponent(CComponentLifeForm(dotSprite))
+
+        self.selectionHiliteSprite = selectionHiliteSprite
     }
 }

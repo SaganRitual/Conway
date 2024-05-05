@@ -22,6 +22,9 @@
 		D4257D342BE70A3400A3A58B /* GridSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4257D1F2BE7087400A3A58B /* GridSize.swift */; };
 		D4257D352BE70A3400A3A58B /* GridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4257D202BE7087400A3A58B /* GridView.swift */; };
 		D4257D372BE70AA000A3A58B /* CCellContents.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4257D362BE70AA000A3A58B /* CCellContents.swift */; };
+		D4257D3A2BE70B3200A3A58B /* CComponentSprite.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4257D392BE70B3200A3A58B /* CComponentSprite.swift */; };
+		D4257D3C2BE70BB500A3A58B /* CEntityGridCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4257D3B2BE70BB500A3A58B /* CEntityGridCell.swift */; };
+		D4257D3E2BE70CE300A3A58B /* CComponentLifeForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4257D3D2BE70CE300A3A58B /* CComponentLifeForm.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +45,9 @@
 		D4257D2D2BE7099900A3A58B /* CoreGraphics+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CoreGraphics+Extensions.swift"; sourceTree = "<group>"; };
 		D4257D2E2BE7099900A3A58B /* String+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		D4257D362BE70AA000A3A58B /* CCellContents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CCellContents.swift; sourceTree = "<group>"; };
+		D4257D392BE70B3200A3A58B /* CComponentSprite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CComponentSprite.swift; sourceTree = "<group>"; };
+		D4257D3B2BE70BB500A3A58B /* CEntityGridCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CEntityGridCell.swift; sourceTree = "<group>"; };
+		D4257D3D2BE70CE300A3A58B /* CComponentLifeForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CComponentLifeForm.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +65,7 @@
 			isa = PBXGroup;
 			children = (
 				D4257D0B2BE7084F00A3A58B /* Conway */,
+				D4257D382BE70B1A00A3A58B /* ECS */,
 				D4257D272BE708FF00A3A58B /* Extensions */,
 				D4257D212BE7087400A3A58B /* Grid */,
 				D4257D222BE708D900A3A58B /* Selectioner */,
@@ -132,6 +139,16 @@
 				D4257D2B2BE7096700A3A58B /* CScene.swift */,
 			);
 			path = SpriteKit;
+			sourceTree = "<group>";
+		};
+		D4257D382BE70B1A00A3A58B /* ECS */ = {
+			isa = PBXGroup;
+			children = (
+				D4257D3D2BE70CE300A3A58B /* CComponentLifeForm.swift */,
+				D4257D392BE70B3200A3A58B /* CComponentSprite.swift */,
+				D4257D3B2BE70BB500A3A58B /* CEntityGridCell.swift */,
+			);
+			path = ECS;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -211,11 +228,14 @@
 				D4257D0D2BE7084F00A3A58B /* ConwayApp.swift in Sources */,
 				D4257D312BE70A3400A3A58B /* GridPoint.swift in Sources */,
 				D4257D322BE70A3400A3A58B /* Grid.swift in Sources */,
+				D4257D3C2BE70BB500A3A58B /* CEntityGridCell.swift in Sources */,
 				D4257D332BE70A3400A3A58B /* GridCell.swift in Sources */,
 				D4257D342BE70A3400A3A58B /* GridSize.swift in Sources */,
 				D4257D352BE70A3400A3A58B /* GridView.swift in Sources */,
 				D4257D372BE70AA000A3A58B /* CCellContents.swift in Sources */,
 				D4257D2C2BE7096700A3A58B /* CScene.swift in Sources */,
+				D4257D3E2BE70CE300A3A58B /* CComponentLifeForm.swift in Sources */,
+				D4257D3A2BE70B3200A3A58B /* CComponentSprite.swift in Sources */,
 				D4257D252BE708F300A3A58B /* SelectionerView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

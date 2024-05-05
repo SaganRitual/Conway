@@ -5,6 +5,7 @@ import SpriteKit
 
 final class CScene: SKScene, ObservableObject {
     static let cellSizeInPixels = CGSize(width: 10, height: 10)
+    static let lifeTickInterval: TimeInterval = 1.0
     static let MIN_ZOOM: CGFloat = 0.125
     static let MAX_ZOOM: CGFloat = 8
     static let paddingAllowance = 0.9
@@ -20,8 +21,10 @@ final class CScene: SKScene, ObservableObject {
     var circleSpriteTexture: SKTexture!
     var grid: Grid<GridCell>!
     var lastUpdateTime: TimeInterval = -1
+    var lifeTickCountdown: TimeInterval = CScene.lifeTickInterval
     var pixelSpriteTexture: SKTexture!
     var selectionerView: SelectionerView!
+    var userOverride = false
 
     var dotSprites = [SKSpriteNode]()
 
@@ -70,10 +73,13 @@ final class CScene: SKScene, ObservableObject {
             let cell = grid.cellAt(ss)
             let positionInScene = gridView.convertPointToScene(position: cell.gridPosition)
 
-            selectionHiliteSprites[ss].position = positionInScene
-            dotSprites[ss].position = positionInScene
+            let s = selectionHiliteSprites[ss]
+            let d = dotSprites[ss]
 
-            cell.contents = CCellContents(dotSprite: dotSprites[ss], selectionStageHiliteSprite: selectionHiliteSprites[ss])
+            s.position = positionInScene
+            d.position = positionInScene
+
+            cell.contents = CCellContents(dotSprite: d, selectionHiliteSprite: s)
         }
 
         selectionerView = SelectionerView(
@@ -102,6 +108,7 @@ final class CScene: SKScene, ObservableObject {
     func redraw() {
         gridView.showGridLines(showGridLines)
         redrawRequired = false
+        lifeTickCountdown = Self.lifeTickInterval
     }
 
     override func scrollWheel(with event: NSEvent) {
@@ -125,7 +132,11 @@ final class CScene: SKScene, ObservableObject {
 
         let cell = grid.cellAt(gridPoint)
         let contents = cell.contents! as! CCellContents
-        contents.dotSprite.isHidden = !contents.dotSprite.isHidden
+        let lc = contents.entity.component(ofType: CComponentLifeForm.self)!
+
+        lc.directive = lc.isAlive ? .endLife : .beginLife
+
+        userOverride = true
     }
 
     override func update(_ currentTime: TimeInterval) {
@@ -133,7 +144,26 @@ final class CScene: SKScene, ObservableObject {
             lastUpdateTime = currentTime
         }
 
+        let deltaTime = currentTime - lastUpdateTime
+
         defer { lastUpdateTime = currentTime }
+
+        if userOverride {
+            lifeTickCountdown = 0
+        } else {
+            lifeTickCountdown -= deltaTime
+        }
+
+        if lifeTickCountdown <= 0 {
+            if !userOverride {
+                setCellDirectives()
+            }
+
+            applyCellDirectives()
+
+            userOverride = false
+            lifeTickCountdown = Self.lifeTickInterval
+        }
 
         if redrawRequired {
             redraw()
@@ -143,7 +173,70 @@ final class CScene: SKScene, ObservableObject {
     func updateForSelection() {
         gridView.selectionStageCells.forEach { cell in
             let contents = cell.contents! as! CCellContents
-            contents.dotSprite.isHidden = !contents.dotSprite.isHidden
+            let lc = contents.entity.component(ofType: CComponentLifeForm.self)!
+
+            lc.directive = lc.isAlive ? .endLife : .beginLife
+
+            userOverride = true
+        }
+    }
+}
+
+private extension CScene {
+    func applyCellDirectives() {
+        grid.makeIterator().forEach { cell in
+            let cc = cell.contents! as! CCellContents
+            let lc = cc.entity.component(ofType: CComponentLifeForm.self)!
+
+            switch lc.directive {
+            case .beginLife:
+                lc.sprite.isHidden = false
+                lc.isAlive = true
+            case .endLife:
+                lc.sprite.isHidden = true
+                lc.isAlive = false
+            default:
+                break
+            }
+        }
+    }
+
+    func setCellDirectives() {
+        grid.makeIterator().forEach { cell in
+            let cx = cell.gridPosition.x, cy = cell.gridPosition.y
+
+            let cc = cell.contents! as! CCellContents
+            let lc = cc.entity.component(ofType: CComponentLifeForm.self)!
+
+            let liveNeighborsCount = [
+                GridPoint(x: cx, y: cy + 1), GridPoint(x: cx + 1, y: cy),
+                GridPoint(x: cx, y: cy - 1), GridPoint(x: cx - 1, y: cy)
+            ].filter { position in
+                guard grid.isOnGrid(position) else { return false }
+
+                let nc = grid.cellAt(position).contents! as! CCellContents
+                let nn = nc.entity.component(ofType: CComponentLifeForm.self)!
+                return nn.isAlive
+            }.count
+
+            // Rules, per wikipedia
+            // https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
+            // Any live cell with fewer than two live neighbors dies, as if by underpopulation.
+            // Any live cell with two or three live neighbors lives on to the next generation.
+            // Any live cell with more than three live neighbors dies, as if by overpopulation.
+            // Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
+
+            lc.directive = .noChange
+
+            if lc.isAlive {
+                if liveNeighborsCount < 2 || liveNeighborsCount > 3 {
+                    lc.directive = .endLife
+                }
+            } else {
+                if liveNeighborsCount == 3 {
+                    lc.directive = .beginLife
+                }
+            }
         }
     }
 }
