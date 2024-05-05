@@ -97,7 +97,7 @@ class Grid<T: GridCellProtocol> {
     func makeIterator() -> IndexingIterator<[T]> { theCells.makeIterator() }
 
     /// For iterating over all the cells in a given rectangle
-    func makeSubgrid(center: GridPoint, size: GridSize) -> [T] {
+    func makeSubgrid(center: GridPoint, size: GridSize, excludeCenter: Bool = false) -> [T] {
         var subgridCells = [T]()
 
         switch origin {
@@ -109,6 +109,11 @@ class Grid<T: GridCellProtocol> {
                 // at the beginning and (right, bottom) at the end
                 let offset = GridPoint(x: x, y: -y)
                 let gridPosition = offset + center
+
+                if excludeCenter && offset == .zero { continue }
+
+                guard isOnGrid(gridPosition) else { continue }
+
                 subgridCells.append(cellAt(gridPosition))
             }}
 

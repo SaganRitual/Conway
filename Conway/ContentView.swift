@@ -161,7 +161,16 @@ struct ContentView: View {
                 }
                 .toggleStyle(.checkbox)
                 .onChange(of: scene.showGridLines) {
-                    scene.redrawRequired = true
+                    scene.requireRedraw()
+                }
+                .padding(.bottom)
+
+                Button("Clear All") {
+                    scene.clearAll()
+                }
+
+                Button("Sow Random") {
+                    scene.sowRandom()
                 }
 
                 Spacer()

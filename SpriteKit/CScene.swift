@@ -6,14 +6,14 @@ import SpriteKit
 final class CScene: SKScene, ObservableObject {
     static let cellSizeInPixels = CGSize(width: 10, height: 10)
     static let gridSizeInCells = GridSize(width: 25, height: 25)
-    static let lifeTickInterval: TimeInterval = 1.0
+    static let lifeTickInterval: TimeInterval = 0.25
     static let MIN_ZOOM: CGFloat = 0.125
     static let MAX_ZOOM: CGFloat = 8
     static let paddingAllowance = 0.9
 
     @Published var cameraScale: CGFloat = 4
     @Published var showGridLines = false
-    @Published var redrawRequired = true
+    @Published var sowRate: Double = 0.25
 
     let cameraNode = SKCameraNode()
     let rootNode = SKNode()
@@ -24,6 +24,7 @@ final class CScene: SKScene, ObservableObject {
     var lastUpdateTime: TimeInterval = -1
     var lifeTickCountdown: TimeInterval = CScene.lifeTickInterval
     var pixelSpriteTexture: SKTexture!
+    var redrawRequired = true
     var selectionerView: SelectionerView!
     var userOverride = false
 
@@ -35,7 +36,7 @@ final class CScene: SKScene, ObservableObject {
     let selectionHiliteRoot = SKNode()
     var selectionHiliteSprites = [SKSpriteNode]()
 
-    @Published var gridView: GridView!
+    var gridView: GridView!
 
     override func didMove(to view: SKView) {
         scaleMode = .resizeFill
@@ -106,10 +107,14 @@ final class CScene: SKScene, ObservableObject {
         selectionerView.reset()
     }
 
-    func redraw() {
+    private func redraw() {
         gridView.showGridLines(showGridLines)
         redrawRequired = false
         lifeTickCountdown = Self.lifeTickInterval
+    }
+
+    func requireRedraw() {
+        redrawRequired = true
     }
 
     override func scrollWheel(with event: NSEvent) {
@@ -183,6 +188,32 @@ final class CScene: SKScene, ObservableObject {
     }
 }
 
+extension CScene {
+    func clearAll() {
+        grid.makeIterator().forEach { cell in
+            let cc = cell.contents! as! CCellContents
+            let lc = cc.entity.component(ofType: CComponentLifeForm.self)!
+
+            lc.directive = .endLife
+        }
+
+        userOverride = true
+    }
+
+    func sowRandom() {
+        grid.makeIterator().forEach { cell in
+            if Double.random(in: 0..<1) > sowRate { return }
+
+            let cc = cell.contents! as! CCellContents
+            let lc = cc.entity.component(ofType: CComponentLifeForm.self)!
+
+            lc.directive = .beginLife
+        }
+
+        userOverride = true
+    }
+}
+
 private extension CScene {
     func applyCellDirectives() {
         grid.makeIterator().forEach { cell in
@@ -199,26 +230,27 @@ private extension CScene {
             default:
                 break
             }
+
+            lc.directive = .noChange
         }
     }
 
     func setCellDirectives() {
         grid.makeIterator().forEach { cell in
-            let cx = cell.gridPosition.x, cy = cell.gridPosition.y
+            let subGrid = grid.makeSubgrid(
+                center: cell.gridPosition, size: GridSize(width: 3, height: 3),
+                excludeCenter: true
+            )
+
+            let liveNeighborsCount = subGrid.reduce(0) { subtotal, ccell in
+                let ccc = ccell.contents! as! CCellContents
+                let lcc = ccc.entity.component(ofType: CComponentLifeForm.self)!
+
+                return subtotal + (lcc.isAlive ? 1 : 0)
+            }
 
             let cc = cell.contents! as! CCellContents
             let lc = cc.entity.component(ofType: CComponentLifeForm.self)!
-
-            let liveNeighborsCount = [
-                GridPoint(x: cx, y: cy + 1), GridPoint(x: cx + 1, y: cy),
-                GridPoint(x: cx, y: cy - 1), GridPoint(x: cx - 1, y: cy)
-            ].filter { position in
-                guard grid.isOnGrid(position) else { return false }
-
-                let nc = grid.cellAt(position).contents! as! CCellContents
-                let nn = nc.entity.component(ofType: CComponentLifeForm.self)!
-                return nn.isAlive
-            }.count
 
             // Rules, per wikipedia
             // https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
