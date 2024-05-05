@@ -64,24 +64,24 @@ class SelectionerView {
         // positions because of the anchor configuration we setup at init
         let sx = startVertex.x - shift.x
         let sy = scene.size.height - startVertex.y - shift.y
-        let shiftedStart = CGPoint(x: sx, y: sy) * scene.cameraScale
+        let shiftedStart = CGPoint(x: sx, y: sy) / scene.cameraScale
 
         borderSprite(.n).position = shiftedStart
         borderSprite(.w).position = shiftedStart
 
         let ex = endVertex.x - shift.x
         let ey = scene.size.height - endVertex.y - shift.y
-        let shiftedEnd = CGPoint(x: ex, y: ey) * scene.cameraScale
+        let shiftedEnd = CGPoint(x: ex, y: ey) / scene.cameraScale
 
         borderSprite(.e).position = shiftedEnd
         borderSprite(.s).position = shiftedEnd
 
-        let hScale = CGSize(width: boxSize.width, height: 2) * scene.cameraScale
+        let hScale = CGSize(width: boxSize.width, height: 2) / scene.cameraScale
 
         borderSprite(.n).scale(to: hScale)
         borderSprite(.s).scale(to: hScale)
 
-        let vScale = CGSize(width: 2, height: boxSize.height) * scene.cameraScale
+        let vScale = CGSize(width: 2, height: boxSize.height) / scene.cameraScale
 
         borderSprite(.e).scale(to: vScale)
         borderSprite(.w).scale(to: vScale)

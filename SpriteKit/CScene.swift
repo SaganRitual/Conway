@@ -5,13 +5,14 @@ import SpriteKit
 
 final class CScene: SKScene, ObservableObject {
     static let cellSizeInPixels = CGSize(width: 10, height: 10)
+    static let gridSizeInCells = GridSize(width: 25, height: 25)
     static let lifeTickInterval: TimeInterval = 1.0
     static let MIN_ZOOM: CGFloat = 0.125
     static let MAX_ZOOM: CGFloat = 8
     static let paddingAllowance = 0.9
 
-    @Published var cameraScale: CGFloat = 0.2
-    @Published var showGridLines = true
+    @Published var cameraScale: CGFloat = 4
+    @Published var showGridLines = false
     @Published var redrawRequired = true
 
     let cameraNode = SKCameraNode()
@@ -55,9 +56,9 @@ final class CScene: SKScene, ObservableObject {
         centerDotSprite.anchorPoint = CGPoint(x: 0.5, y: 0.5)
 
         cameraNode.position = CGPoint.zero
-        cameraNode.setScale(cameraScale)
+        cameraNode.setScale(1 / cameraScale)
 
-        grid = Grid(size: GridSize(width: 5, height: 5), origin: .center, yAxis: .upIsPositive)
+        grid = Grid(size: Self.gridSizeInCells, origin: .center, yAxis: .upIsPositive)
 
         gridView = GridView(
             scene: self, grid: grid,
@@ -248,7 +249,7 @@ private extension CScene {
 
             sprite.alpha = 1
             sprite.colorBlendFactor = 1
-            sprite.color = .blue
+            sprite.color = .cyan
             sprite.isHidden = true
             sprite.anchorPoint = CGPoint(x: 0.5, y: 0.5)
             sprite.size = Self.cellSizeInPixels * 0.25

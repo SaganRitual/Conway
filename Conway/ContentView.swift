@@ -122,7 +122,7 @@ struct ContentView: View {
                 }
                 .padding(.bottom)
 
-                Text("Zoom \(String(format: "%.2f", 1 / scene.cameraScale).padLeft(targetLength: 6))")
+                Text("Zoom \(String(format: "%.2f", scene.cameraScale).padLeft(targetLength: 6))")
                     .padding(.bottom)
 
                 HStack {
